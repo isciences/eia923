@@ -1,0 +1,18 @@
+Package: eia923
+Type: Package
+Title: Download and standardize EIA-923 data
+Version: 0.1.0
+Author: Daniel Baston
+Maintainer: Daniel Baston <dbaston@isciences.com>
+Description: Downloads and standardizes EIA-923 generation data from 2001 onward.
+License: file LICENSE
+Encoding: UTF-8
+LazyData: true
+Imports:
+    dplyr,
+    readxl,
+    tidyr,
+    tidyselect
+Suggests: 
+    testthat
+RoxygenNote: 6.1.1
