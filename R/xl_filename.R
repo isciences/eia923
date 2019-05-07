@@ -19,4 +19,6 @@ xl_filename <- function(year) {
   } else {
     xl_fname <- sprintf('f906920y%04d.xls', year)
   }
+
+  xl_fname
 }
