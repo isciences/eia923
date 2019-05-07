@@ -8,7 +8,7 @@
 read_year <- function(year, cache_dir=NULL) {
   workdir <- tempdir()
 
-  xl_fpath <- file.path(dirname, xl_filename(year))
+  xl_fpath <- file.path(workdir, xl_filename(year))
   zip_path <- cached_download(url_for_year(year), cache_dir=cache_dir)
   utils::unzip(zip_path, files=xl_filename(year), exdir=workdir)
 
