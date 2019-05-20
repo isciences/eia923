@@ -43,6 +43,11 @@ read_plants <- function(cache_dir=NULL) {
     dplyr::top_n(1, capacity_mw) %>%
     select(plant_id, primary_fuel)
 
+  total_capacity <- generator_dat %>%
+    dplyr::group_by(plant_id) %>%
+    dplyr::summarize(capacity_mw=sum(capacity_mw))
+
   plant_dat %>%
-    inner_join(dominant_fuel, by='plant_id')
+    inner_join(dominant_fuel, by='plant_id') %>%
+    inner_join(total_capacity, by='plant_id')
 }
