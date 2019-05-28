@@ -16,4 +16,6 @@ Imports:
     tidyselect
 Suggests: 
     testthat
+Remotes:
+    r-lib/tidyr
 RoxygenNote: 6.1.1
