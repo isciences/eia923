@@ -17,5 +17,5 @@ Imports:
 Suggests: 
     testthat
 Remotes:
-    r-lib/tidyr
+    tidyverse/tidyr
 RoxygenNote: 6.1.1
