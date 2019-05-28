@@ -4,6 +4,7 @@
 #' @param cache_dir directory in which to cache downloaded files; will be cached
 #'                  in package internal directory by default
 #' @return data frame containing generation data
+#' @importFrom magrittr %>%
 #' @export
 read_year <- function(year, cache_dir=NULL) {
   workdir <- tempdir()
@@ -12,24 +13,21 @@ read_year <- function(year, cache_dir=NULL) {
   zip_path <- cached_download(url_for_year(year), cache_dir=cache_dir)
   utils::unzip(zip_path, files=xl_filename(year), exdir=workdir)
 
-  dat <- readxl::read_excel(xl_fpath,
-                            sheet='Page 1 Generation and Fuel Data',
-                            skip=ifelse(year >= 2011, 5, 7))
-
-  dat <- dplyr::select(dat,
-                       plant_id=tidyselect::matches('Plant Id', ignore.case=TRUE),
-                       year=tidyselect::matches('year', ignore.case=TRUE),
-                       tidyselect::starts_with('Netgen', ignore.case=TRUE))
-
-  dat <- tidyr::pivot_longer(dat,
-                             cols=tidyselect::starts_with('Netgen', ignore.case=TRUE),
-                             names_to='month',
-                             values_to='generation_mwh',
-                             names_prefix='(Netgen|NETGEN)(\\r\\n|_)')
-
-  dplyr::mutate(dat,
-                month=sapply(month, function(m) months[[m]]),
-                generation_mwh=as.numeric(generation_mwh))
+  readxl::read_excel(xl_fpath,
+                     sheet='Page 1 Generation and Fuel Data',
+                     skip=ifelse(year >= 2011, 5, 7)) %>%
+    dplyr::select(plant_id=tidyselect::matches('Plant Id', ignore.case=TRUE),
+                  year=tidyselect::matches('year', ignore.case=TRUE),
+                  tidyselect::starts_with('Netgen', ignore.case=TRUE)) %>%
+    tidyr::pivot_longer(
+      cols=tidyselect::starts_with('Netgen', ignore.case=TRUE),
+      names_to='month',
+      values_to='generation_mwh',
+      names_prefix='(Netgen|NETGEN)(\\r\\n|_)') %>%
+    dplyr::mutate( month=sapply(month, function(m) months[[m]]),
+                   generation_mwh=as.numeric(generation_mwh)) %>%
+    dplyr::group_by(plant_id, year, month) %>%
+    dplyr::summarize(generation_mwh = sum(generation_mwh, na.rm = TRUE))
 }
 
 months <- list(
